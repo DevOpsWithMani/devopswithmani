@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS App Distribution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #007AFF, #0056CC);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        
+        .version {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .description {
+            color: #34495e;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .install-btn {
+            background: linear-gradient(135deg, #007AFF, #0056CC);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.4);
+        }
+        
+        .install-btn:active {
+            transform: translateY(0);
+        }
+        
+        .install-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .install-btn:hover::before {
+            left: 100%;
+        }
+        
+        .device-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #007AFF;
+        }
+        
+        .device-info h3 {
+            color: #007AFF;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .device-info p {
+            color: #6c757d;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .requirements {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .requirements h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .requirements ul {
+            color: #856404;
+            font-size: 0.9em;
+            margin-left: 20px;
+        }
+        
+        .requirements li {
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .status {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .qr-code {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .qr-code img {
+            max-width: 150px;
+            height: auto;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .share-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn.copy {
+            background: #28a745;
+            color: white;
+        }
+        
+        .share-btn.copy:hover {
+            background: #218838;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .install-btn {
+                padding: 15px 30px;
+                font-size: 1.1em;
+            }
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(30, 30, 30, 0.95);
+                color: #e9ecef;
+            }
+            
+            h1 {
+                color: #f8f9fa;
+            }
+            
+            .description {
+                color: #ced4da;
+            }
+            
+            .device-info {
+                background: #343a40;
+                border-left-color: #007AFF;
+            }
+            
+            .device-info p {
+                color: #adb5bd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-icon">📱</div>
+        
+        <h1 id="app-name">Your App Name</h1>
+        <div class="version">Version <span id="app-version">1.0.0</span></div>
+        
+        <div class="description">
+            Click the button below to install this app on your iOS device. 
+            Make sure you're using Safari browser on your iPhone or iPad.
+        </div>
+        
+        <a href="#" id="install-link" class="install-btn" onclick="installApp()">
+            📲 Install App
+        </a>
+        
+        <div class="status" id="status-message"></div>
+        
+        <div class="device-info">
+            <h3>📋 Installation Steps:</h3>
+            <p>1. Tap the "Install App" button above<br>
+               2. Tap "Install" when prompted<br>
+               3. Go to Settings → General → VPN & Device Management<br>
+               4. Trust the developer certificate if needed</p>
+        </div>
+        
+        <div class="requirements">
+            <h4>⚠️ Requirements:</h4>
+            <ul>
+                <li>iOS device with Safari browser</li>
+                <li>Device registered in developer account</li>
+                <li>Valid provisioning profile</li>
+                <li>Stable internet connection</li>
+            </ul>
+        </div>
+        
+        <div class="share-buttons">
+            <button class="share-btn copy" onclick="copyInstallLink()">
+                📋 Copy Install Link
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>📧 Having issues? Contact your app developer</p>
+            <p><small>Built with ❤️ for iOS distribution</small></p>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration - Update these values
+        const config = {
+            appName: 'Your App Name',
+            appVersion: '1.0.0',
+            appIcon: '📱', // You can use an emoji or replace with <img> tag
+            manifestUrl: 'https://yourusername.github.io/your-repo-name/manifest.plist',
+            description: 'Click the button below to install this app on your iOS device. Make sure you\'re using Safari browser on your iPhone or iPad.'
+        };
+        
+        // Initialize the page
+        function initializePage() {
+            // Update app information
+            document.getElementById('app-name').textContent = config.appName;
+            document.getElementById('app-version').textContent = config.appVersion;
+            document.querySelector('.description').textContent = config.description;
+            
+            // Set up install link
+            const installLink = `itms-services://?action=download-manifest&url=${config.manifestUrl}`;
+            document.getElementById('install-link').href = installLink;
+            
+            // Update page title
+            document.title = `Install ${config.appName}`;
+            
+            // Detect device type
+            detectDevice();
+        }
+        
+        // Install app function
+        function installApp() {
+            const installLink = `itms-services://?action=download-manifest&url=${config.manifestUrl}`;
+            
+            // Check if on iOS
+            if (!isIOS()) {
+                showStatus('This installation only works on iOS devices with Safari browser.', 'error');
+                return false;
+            }
+            
+            // Show installation started message
+            showStatus('Installation started! Check your home screen for the app.', 'success');
+            
+            // Open install link
+            window.location.href = installLink;
+            
+            // Track installation attempt
+            trackInstallation();
+            
+            return false;
+        }
+        
+        // Copy install link to clipboard
+        function copyInstallLink() {
+            const installLink = `itms-services://?action=download-manifest&url=${config.manifestUrl}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(installLink).then(() => {
+                    showStatus('Install link copied to clipboard!', 'success');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = installLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showStatus('Install link copied to clipboard!', 'success');
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+            statusElement.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Detect if device is iOS
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+        
+        // Detect device and show appropriate message
+        function detectDevice() {
+            if (!isIOS()) {
+                const deviceInfo = document.querySelector('.device-info');
+                deviceInfo.innerHTML = `
+                    <h3>⚠️ Device Not Supported</h3>
+                    <p>This app can only be installed on iOS devices (iPhone/iPad) using Safari browser. 
+                    Please open this link on your iOS device to install the app.</p>
+                `;
+                deviceInfo.style.background = '#f8d7da';
+                deviceInfo.style.borderLeftColor = '#dc3545';
+            }
+        }
+        
+        // Track installation attempts (you can connect this to analytics)
+        function trackInstallation() {
+            console.log('Installation attempted at:', new Date().toISOString());
+            // Add your analytics tracking here
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // Page became visible again, installation might have completed
+                setTimeout(() => {
+                    if (isIOS()) {
+                        showStatus('If the app didn\'t install, try again or check Settings → General → VPN & Device Management', 'error');
+                    }
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
